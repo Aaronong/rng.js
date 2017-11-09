@@ -81,7 +81,7 @@ let bigNumber = rng2.nthSkip(23, 59);
 #### `Retrieve nth number in RNG sequence`
 
 ```javascript
-let rng = new Random();
+var rng = new Random();
 /**
  * Get the nth random number in the RNG sequence
  * If no params: Returns the zeroth number in the RNG sequence
@@ -91,13 +91,13 @@ let rng = new Random();
  */
 
 //Retrieve nth number where n is a 32-bit number
-let tenthNumber = rng.nthNumber(10);
-let hundredthNumber = rng.nthNumber(100);
-let thousandthNumber = rng.nthNumber(1000);
+var tenthNumber = rng.nthNumber(10);
+var hundredthNumber = rng.nthNumber(100);
+var thousandthNumber = rng.nthNumber(1000);
 
 //Jump ahead by a 64-bit number
-let rng2 = new Random(); 
-let bigNumber = rng2.nthSkip(23, 59); 
+var rng2 = new Random(); 
+var bigNumber = rng2.nthSkip(23, 59); 
 //Big number is the 253403070487th state of the RNG sequence
 //or the 11101100000000000000000000000000010111th state in binary
 ```
