@@ -1,15 +1,16 @@
+"use strict";
 class Random {
-  constructor(lowSeed = 0xf02386, highSeed = 0) {
+  constructor(lowSeed = 0xf02386, highSeed = 0xfa472) {
     //multiplier taken from http://www.ams.org/journals/mcom/1999-68-225/S0025-5718-99-00996-5/S0025-5718-99-00996-5.pdf
 
     this.highMultiplier = 0x27bb2ee6;
     this.lowMultiplier = 0x87b0b0fd;
     this.highConstant = 0x14057b7e;
     this.lowConstant = 0xf767814f;
-    this.highSeed = highSeed;
-    this.lowSeed = lowSeed;
-    this.highState = this.highSeed;
-    this.lowState = this.lowSeed;
+    this.highSeed = highSeed >>> 0;
+    this.lowSeed = lowSeed >>> 0;
+    this.highState = this.highSeed >>> 0;
+    this.lowState = this.lowSeed >>> 0;
     this.highStateCount = 0;
     this.lowStateCount = 0;
     this._imul = Math.imul;
@@ -31,11 +32,11 @@ class Random {
   setSeed(low, high) {
     if (low) {
       this.lowSeed = low >>> 0;
-      this.lowState = this.lowSeed;
+      this.lowState = this.lowSeed >>> 0;
     }
     if (high) {
       this.highSeed = high >>> 0;
-      this.highState = this.highSeed;
+      this.highState = this.highSeed >>> 0;
     }
     this.highStateCount = 0;
     this.lowStateCount = 0;
@@ -56,8 +57,8 @@ class Random {
    * @param {integer: negative numbers transformed to unsigned} nHi 
    */
   setStateCount(lowCount = 0, highCount = 0) {
-    this.highState = this.highSeed;
-    this.lowState = this.lowSeed;
+    this.highState = this.highSeed >>> 0;
+    this.lowState = this.lowSeed >>> 0;
     this.highStateCount = 0;
     this.lowStateCount = 0;
     this.nthSkip(lowCount, highCount);
@@ -131,7 +132,7 @@ class Random {
    */
   nextNumber() {
     this._nextState();
-    return [this.highState, this.lowState];
+    return this._generateRandomNumber();
   }
 
   /**
@@ -142,7 +143,7 @@ class Random {
    */
   nthSkip(nLo = 1, nHi = 0) {
     this._fastForward(nLo >>> 0, nHi >>> 0);
-    return [this.highState, this.lowState];
+    return this._generateRandomNumber();
   }
 
   /**
@@ -152,10 +153,11 @@ class Random {
    * @param {integer: negative numbers transformed to unsigned} nHi 
    */
   nthNumber(nLo = 0, nHi = 0) {
-    this.highState = this.highSeed;
-    this.lowState = this.lowSeed;
+    this.highState = this.highSeed >>> 0;
+    this.lowState = this.lowSeed >>> 0;
     this.highStateCount = 0;
     this.lowStateCount = 0;
+    this._generateRandomNumber();
     return this.nthSkip(nLo, nHi);
   }
 
@@ -209,8 +211,8 @@ class Random {
       newHi,
       newLow
     );
-    this.highState = newHi;
-    this.lowState = newLow;
+    this.highState = newHi >>> 0;
+    this.lowState = newLow >>> 0;
     [this.highStateCount, this.lowStateCount] = this._add(
       this.highStateCount,
       this.lowStateCount,
@@ -226,9 +228,9 @@ class Random {
     return (hi & 1) === 1;
   }
 
-  _div2(hi, lo) {
-    const newHi = hi >>> 1;
-    const newLo = (((hi & 1) << 31) | (lo >>> 1)) >>> 0;
+  _rightShift(hi, lo, num) {
+    const newHi = hi >>> num;
+    const newLo = ((hi << (32 - num)) | (lo >>> num)) >>> 0;
     return [newHi, newLo];
   }
 
@@ -247,7 +249,7 @@ class Random {
         [GHi, GLo] = this._multiply(GHi, GLo, hHi, hLo);
       }
       [hHi, hLo] = this._multiply(hHi, hLo, hHi, hLo);
-      [iHi, iLo] = this._div2(iHi, iLo);
+      [iHi, iLo] = this._rightShift(iHi, iLo, 1);
     }
     let CHi = 0;
     let CLo = 0;
@@ -265,7 +267,7 @@ class Random {
       let [h1Hi, h1Lo] = this._add(hHi, hLo, 0, 1);
       [fHi, fLo] = this._multiply(fHi, fLo, h1Hi, h1Lo);
       [hHi, hLo] = this._multiply(hHi, hLo, hHi, hLo);
-      [iHi, iLo] = this._div2(iHi, iLo);
+      [iHi, iLo] = this._rightShift(iHi, iLo, 1);
     }
     [this.highStateCount, this.lowStateCount] = this._add(
       this.highStateCount,
@@ -285,6 +287,16 @@ class Random {
       this.highState,
       this.lowState
     );
+  }
+  //Generates random number from state using the PCG-XSH-RR algorithm
+  //output = rotate32((state ^ (state >> 18)) >> 27, state >> 59);
+  _generateRandomNumber() {
+    var [hi, lo] = this._rightShift(this.highState, this.lowState, 18);
+    hi = hi ^ this.highState;
+    lo = lo ^ this.lowState;
+    [hi, lo] = this._rightShift(hi, lo, 27);
+    const rot = this.highState >>> 27;
+    return (((lo >>> rot) | (lo << (32 - rot))) >>> 0) / (-1 >>> 0);
   }
 }
 
