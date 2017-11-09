@@ -1,5 +1,11 @@
 "use strict";
+
 class Random {
+  /**
+   * Returns a new random number generator
+   * @param {integer: negative numbers transformed to 32-bit unsigned} lowSeed 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} highSeed 
+   */
   constructor(lowSeed = 0xf02386, highSeed = 0xfa472) {
     //multiplier taken from http://www.ams.org/journals/mcom/1999-68-225/S0025-5718-99-00996-5/S0025-5718-99-00996-5.pdf
 
@@ -25,22 +31,21 @@ class Random {
     }
   }
   /**
-   * Set the seed of the RNG, returns the modified RNG, count is reset
-   * @param {integer: negative numbers transformed to unsigned} low 
-   * @param {integer: negative numbers transformed to unsigned} high 
+   * Set the seed of the RNG, state and count is reset
+   * @param {integer: negative numbers transformed to 32-bit unsigned} lowSeed
+   * @param {integer: negative numbers transformed to 32-bit unsigned} highSeed
    */
-  setSeed(low, high) {
-    if (low) {
-      this.lowSeed = low >>> 0;
+  setSeed(lowSeed, highSeed) {
+    if (lowSeed) {
+      this.lowSeed = lowSeed >>> 0;
       this.lowState = this.lowSeed >>> 0;
     }
-    if (high) {
-      this.highSeed = high >>> 0;
+    if (highSeed) {
+      this.highSeed = highSeed >>> 0;
       this.highState = this.highSeed >>> 0;
     }
     this.highStateCount = 0;
     this.lowStateCount = 0;
-    return this;
   }
 
   /**
@@ -53,8 +58,8 @@ class Random {
   /**
    * Set the RNG to the nth state
    * If no params: Reset the RNG sequence to the zeroth state
-   * @param {integer: negative numbers transformed to unsigned} nLo 
-   * @param {integer: negative numbers transformed to unsigned} nHi 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} lowCount 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} highCount 
    */
   setStateCount(lowCount = 0, highCount = 0) {
     this.highState = this.highSeed >>> 0;
@@ -65,7 +70,7 @@ class Random {
   }
 
   /**
-   * Get the state count of the RNG
+   * Returns the state count of the RNG
    */
   getStateCount() {
     return [this.lowStateCount, this.highStateCount];
@@ -73,8 +78,8 @@ class Random {
 
   /**
    * Set the incrementer of the RNG, defaults to current constants
-   * @param {integer: negative numbers transformed to unsigned} lowConstant 
-   * @param {integer: negative numbers transformed to unsigned} highConstant 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} lowConstant 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} highConstant 
    */
   setIncrementer(
     lowConstant = this.lowConstant,
@@ -85,7 +90,7 @@ class Random {
   }
 
   /**
-   * Returns the current incrementers used by the RNG
+   * Returns the current incrementer used by the RNG
    */
   getIncrementer() {
     return [this.lowConstant, this.highConstant];
@@ -107,12 +112,12 @@ class Random {
 
   /**
    * Load a full set of states to the RNG
-   * @param {integer: negative numbers transformed to unsigned} lowSeed 
-   * @param {integer: negative numbers transformed to unsigned} highSeed 
-   * @param {integer: negative numbers transformed to unsigned} lowStateCount 
-   * @param {integer: negative numbers transformed to unsigned} highStateCount 
-   * @param {integer: negative numbers transformed to unsigned} lowConstant 
-   * @param {integer: negative numbers transformed to unsigned} highConstant 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} lowSeed 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} highSeed 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} lowStateCount 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} highStateCount 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} lowConstant 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} highConstant 
    */
   loadRngStates(
     lowSeed,
@@ -128,7 +133,7 @@ class Random {
   }
 
   /**
-   * Get the next random number.
+   * Returns the next random number in the RNG sequence.
    */
   nextNumber() {
     this._nextState();
@@ -138,27 +143,27 @@ class Random {
   /**
    * Get the next random number by skipping forward by n steps.
    * If no params: Behaves like nextNumber.
-   * @param {integer: negative numbers transformed to unsigned} nLo 
-   * @param {integer: negative numbers transformed to unsigned} nHi 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} lowSkip
+   * @param {integer: negative numbers transformed to 32-bit unsigned} highSkip 
    */
-  nthSkip(nLo = 1, nHi = 0) {
-    this._fastForward(nLo >>> 0, nHi >>> 0);
+  nthSkip(lowSkip = 1, highSkip = 0) {
+    this._fastForward(lowSkip >>> 0, highSkip >>> 0);
     return this._generateRandomNumber();
   }
 
   /**
    * Get the nth random number in the RNG sequence
    * If no params: Returns the zeroth number in the RNG sequence
-   * @param {integer: negative numbers transformed to unsigned} nLo 
-   * @param {integer: negative numbers transformed to unsigned} nHi 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} lowNumber 
+   * @param {integer: negative numbers transformed to 32-bit unsigned} highNumber 
    */
-  nthNumber(nLo = 0, nHi = 0) {
+  nthNumber(lowNumber = 0, highNumber = 0) {
     this.highState = this.highSeed >>> 0;
     this.lowState = this.lowSeed >>> 0;
     this.highStateCount = 0;
     this.lowStateCount = 0;
     this._generateRandomNumber();
-    return this.nthSkip(nLo, nHi);
+    return this.nthSkip(lowNumber, highNumber);
   }
 
   //Multiply state by multiplier
