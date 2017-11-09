@@ -21,6 +21,25 @@ The implementation was inspired by [PCG Random](https://github.com/thomcc/pcg-ra
 
 
 
+## Installation
+
+```bash
+$ npm install rng.js
+```
+
+
+
+## Usage
+
+```javascript
+//es5
+var Random = require("rng.js");
+//es6
+import Random from 'rng.js';
+```
+
+
+
 ## Documentation
 
 ### Random Number Generation
