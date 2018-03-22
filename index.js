@@ -29,6 +29,9 @@ class Random {
         return (al * bl + (((ah * bl + al * bh) << 16) >>> 0)) | 0;
       };
     }
+    this.nextNumber = this.nextNumber.bind(this);
+    this.nthNumber = this.nthNumber.bind(this);
+    this.nthSkip = this.nthSkip.bind(this);
   }
   /**
    * Set the seed of the RNG, state and count is reset
