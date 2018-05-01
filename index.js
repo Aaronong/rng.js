@@ -1,5 +1,14 @@
 "use strict";
 
+//multiplier taken from http://www.ams.org/journals/mcom/1999-68-225/S0025-5718-99-00996-5/S0025-5718-99-00996-5.pdf
+const imul = Math.imul || function imul(a, b) {
+  var ah = (a >>> 16) & 0xffff,
+    al = a & 0xffff;
+  var bh = (b >>> 16) & 0xffff,
+    bl = b & 0xffff;
+  return (al * bl + (((ah * bl + al * bh) << 16) >>> 0)) | 0;
+}
+
 class Random {
   /**
    * Returns a new random number generator
@@ -7,7 +16,6 @@ class Random {
    * @param {integer: negative numbers transformed to 32-bit unsigned} highSeed 
    */
   constructor(lowSeed = 0xf02386, highSeed = 0xfa472) {
-    //multiplier taken from http://www.ams.org/journals/mcom/1999-68-225/S0025-5718-99-00996-5/S0025-5718-99-00996-5.pdf
 
     this.highMultiplier = 0x27bb2ee6;
     this.lowMultiplier = 0x87b0b0fd;
@@ -19,16 +27,6 @@ class Random {
     this.lowState = this.lowSeed >>> 0;
     this.highStateCount = 0;
     this.lowStateCount = 0;
-    this._imul = Math.imul;
-    if (!this._imul) {
-      this._imul = function(a, b) {
-        var ah = (a >>> 16) & 0xffff,
-          al = a & 0xffff;
-        var bh = (b >>> 16) & 0xffff,
-          bl = b & 0xffff;
-        return (al * bl + (((ah * bl + al * bh) << 16) >>> 0)) | 0;
-      };
-    }
   }
   /**
    * Set the seed of the RNG, state and count is reset
@@ -186,8 +184,8 @@ class Random {
       hi = (hi + 1) >>> 0;
     }
 
-    hi = (hi + this._imul(aLo, bHi)) >>> 0;
-    hi = (hi + this._imul(aHi, bLo)) >>> 0;
+    hi = (hi + imul(aLo, bHi)) >>> 0;
+    hi = (hi + imul(aHi, bLo)) >>> 0;
 
     return [hi >>> 0, lo >>> 0];
   }
