@@ -1,6 +1,6 @@
 {
   "name": "rng.js",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description":
     "Random Number Generator library implemented with the PCG algorithm",
   "main": "index.js",
@@ -13,7 +13,7 @@
   },
   "keywords": ["[\"random\"", "\"rng\"", "\"pcg\"", "\"random", "access\"]"],
   "author": "Aaronong",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Aaronong/rng.js/issues"
   },
