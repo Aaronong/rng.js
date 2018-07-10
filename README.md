@@ -1,6 +1,6 @@
 # rng.js
 
-rng.js is a random number generator that allows you to generate the nth number of a random number sequence in logarithmic time. The library was implemented using the [PCG algorithm](http://www.pcg-random.org/).
+rng.js is a random number generator that allows you to generate the _nth_ state in log(_n_) time. The library was implemented using the [PCG algorithm](http://www.pcg-random.org/).
 
 ## rng.js Features
 
