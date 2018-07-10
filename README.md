@@ -1,25 +1,21 @@
 # rng.js
 
-rng.js is a pseudo-random number generator implemented using the [PCG algorithm](http://www.pcg-random.org/).
-
-The implementation was inspired by [PCG Random](https://github.com/thomcc/pcg-random) but extends the library with random access.
+rng.js is a random number generator that allows you to generate the nth number of a random number sequence in logarithmic time. The library was implemented using the [PCG algorithm](http://www.pcg-random.org/).
 
 ## rng.js Features
 
 - Generates a 32-bit float [0,1)
 - Seedable
 - Random access
-  - Retrieve the *nth* number of the RNG sequence in log(*n*) time
-  - Jump ahead by *n* numbers in log(*n*) time
+  - Retrieve the _nth_ number of the RNG sequence in log(_n_) time
+  - Jump ahead by _n_ numbers in log(_n_) time
 - 2 ^ 64 period
 - Supports 64-bit seeds
 - Supports 64-bit random access
 - Save and Load states
 - Excellent statistical quality
 
-![PCG properties](./pcgProperties.png) *Source: http://www.pcg-random.org/*
-
-
+![PCG properties](./pcgProperties.png) _Source: http://www.pcg-random.org/_
 
 ## Installation
 
@@ -27,18 +23,14 @@ The implementation was inspired by [PCG Random](https://github.com/thomcc/pcg-ra
 $ npm install rng.js
 ```
 
-
-
 ## Usage
 
 ```javascript
 //es5
 var Random = require("rng.js");
 //es6
-import Random from 'rng.js';
+import Random from "rng.js";
 ```
-
-
 
 ## Documentation
 
@@ -49,8 +41,8 @@ import Random from 'rng.js';
 ```javascript
 /**
  * Returns a new random number generator
- * @param {integer: negative numbers transformed to 32-bit unsigned} lowSeed 
- * @param {integer: negative numbers transformed to 32-bit unsigned} highSeed 
+ * @param {integer: negative numbers transformed to 32-bit unsigned} lowSeed
+ * @param {integer: negative numbers transformed to 32-bit unsigned} highSeed
  */
 var rng = new Random(lowSeed, highSeed);
 ```
@@ -75,7 +67,7 @@ let rng = new Random();
 /**
  * Get the next random number by skipping forward by n steps.
  * If no params: Behaves like nextNumber.
- * @param {integer: negative numbers transformed to 32-bit unsigned} lowSkip 
+ * @param {integer: negative numbers transformed to 32-bit unsigned} lowSkip
  * @param {integer: negative numbers transformed to 32-bit unsigned} highSkip
  * eg. rng.nthSkip(lowSkip, highSkip);
  */
@@ -86,16 +78,14 @@ let hundredthNumber = rng.nthSkip(90);
 let thousandthNumber = rng.nthSkip(900);
 
 //Jump ahead by a 64-bit number
-let rng2 = new Random(); 
-let bigNumber = rng2.nthSkip(23, 59); 
+let rng2 = new Random();
+let bigNumber = rng2.nthSkip(23, 59);
 //Big number is the 253403070487th state of the RNG sequence
 //or the 11101100000000000000000000000000010111th state in binary
 ```
 
 - lowSkip : the lower (rightmost) 32-bits of the 64-bit skip. (defaults to `1`)
 - highSkip : the higher (leftmost) 32-bits of the 64-bit skip. (defaults to `0`)
-
-
 
 #### `Retrieve nth number in RNG sequence`
 
@@ -105,7 +95,7 @@ var rng = new Random();
  * Get the nth random number in the RNG sequence
  * If no params: Returns the zeroth number in the RNG sequence
  * @param {integer: negative numbers transformed to 32-bit unsigned} lowNumber
- * @param {integer: negative numbers transformed to 32-bit unsigned} highNumber 
+ * @param {integer: negative numbers transformed to 32-bit unsigned} highNumber
  * eg. rng.nthNumber(lowNumber, highNumber)
  */
 
@@ -115,8 +105,8 @@ var hundredthNumber = rng.nthNumber(100);
 var thousandthNumber = rng.nthNumber(1000);
 
 //Jump ahead by a 64-bit number
-var rng2 = new Random(); 
-var bigNumber = rng2.nthSkip(23, 59); 
+var rng2 = new Random();
+var bigNumber = rng2.nthSkip(23, 59);
 //Big number is the 253403070487th state of the RNG sequence
 //or the 11101100000000000000000000000000010111th state in binary
 ```
@@ -158,8 +148,8 @@ rng.getSeed();
 /**
  * Set the RNG to the nth state
  * If no params: Reset the RNG sequence to the zeroth state
- * @param {integer: negative numbers transformed to 32-bit unsigned} lowCount 
- * @param {integer: negative numbers transformed to 32-bit unsigned} highCount 
+ * @param {integer: negative numbers transformed to 32-bit unsigned} lowCount
+ * @param {integer: negative numbers transformed to 32-bit unsigned} highCount
  */
 rng.setStateCount(lowCount, highCount);
 ```
@@ -179,16 +169,14 @@ rng.getSeed();
 /**
  * Set the RNG to the nth state
  * If no params: Reset the RNG sequence to the zeroth state
- * @param {integer: negative numbers transformed to 32-bit unsigned} lowConstant 
- * @param {integer: negative numbers transformed to 32-bit unsigned} highConstant 
+ * @param {integer: negative numbers transformed to 32-bit unsigned} lowConstant
+ * @param {integer: negative numbers transformed to 32-bit unsigned} highConstant
  */
 rng.setStateCount(lowConstant, highConstant);
 ```
 
 - lowConstant: the lower (rightmost) 32-bits of the 64-bit incrementer. (defaults to `0`)
 - highConstant : the higher (leftmost) 32-bits of the 64-bit incrementer. (defaults to `0`)
-
-
 
 #### `Save/Load RNG state`
 
@@ -201,17 +189,19 @@ var saveDate = rng.saveRngStates();
 
 /**
  * Load a full set of states to the RNG
- * @param {integer: negative numbers transformed to 32-bit unsigned} lowSeed 
- * @param {integer: negative numbers transformed to 32-bit unsigned} highSeed 
- * @param {integer: negative numbers transformed to 32-bit unsigned} lowStateCount 
- * @param {integer: negative numbers transformed to 32-bit unsigned} highStateCount 
- * @param {integer: negative numbers transformed to 32-bit unsigned} lowConstant 
- * @param {integer: negative numbers transformed to 32-bit unsigned} highConstant 
+ * @param {integer: negative numbers transformed to 32-bit unsigned} lowSeed
+ * @param {integer: negative numbers transformed to 32-bit unsigned} highSeed
+ * @param {integer: negative numbers transformed to 32-bit unsigned} lowStateCount
+ * @param {integer: negative numbers transformed to 32-bit unsigned} highStateCount
+ * @param {integer: negative numbers transformed to 32-bit unsigned} lowConstant
+ * @param {integer: negative numbers transformed to 32-bit unsigned} highConstant
  */
 rng.loadRngStates(
-  lowSeed, highSeed,
-  lowStateCount, highStateCount,
-  lowConstant, highConstant
-)
+  lowSeed,
+  highSeed,
+  lowStateCount,
+  highStateCount,
+  lowConstant,
+  highConstant
+);
 ```
-
